@@ -55,7 +55,7 @@ export const updateLibrary = async (req, res) => {
 
     try {
         const updatedLibrary = await Library.findByIdAndUpdate(id, {
-            title,
+            name,
             address, 
             books
         }, { new: true });

@@ -1,4 +1,5 @@
 import Client from "../models/Client.js";
+import Library from "../models/Library.js";
 
 export const getAllClients = async (req, res) => {
   try {
@@ -64,7 +65,11 @@ export const updateClient = async (req, res) => {
     lastName,
     firstName,
     email,
-    history: { book, library, buyingDate },
+    history: [{
+      book,
+      library,
+      buyingDate
+    }],
   } = req.body;
 
   try {
@@ -74,11 +79,11 @@ export const updateClient = async (req, res) => {
         lastName,
         firstName,
         email,
-        history: {
+        history: [{
           book,
           library,
-          buyingDate,
-        },
+          buyingDate
+        }],
       },
       { new: true }
     );
@@ -102,5 +107,35 @@ export const deleteClient = async (req, res) => {
     res.json("Client successfully deleted");
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+export const buyBook = async (req, res) => {
+  const { clientId } = req.params;
+  const { bookId, libraryId } = req.body;
+  
+  try {
+    const library = await Library.findById(libraryId);
+    const bookInStock = library.books.find(book => book.bookRef.toString() === bookId);
+
+    if (!bookInStock || bookInStock.stock <= 0) {
+      return res.status(404).json({ message: "Book not in stock in this library" });
+    }
+
+    bookInStock.stock -= 1;
+    await library.save();
+
+    const client = await Client.findById(clientId);
+    client.history.push({
+      book: bookId,
+      library: libraryId,
+      buyingDate: new Date()
+    })
+    await client.save();
+
+    res.status(200).json({ message: "Book purchased successfully", book: bookInStock });
+  } catch (error) {
+      console.error("Error buying book:", error);
+      res.status(500).json({ message: "Internal server error" });
   }
 };
