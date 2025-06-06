@@ -9,7 +9,6 @@ const bookSchema = new mongoose.Schema({
     },
     author: {
         type: [String],
-        required: true,
         trim: true
     },
     publisher: {
@@ -21,7 +20,7 @@ const bookSchema = new mongoose.Schema({
         required: true
     },
     description: {
-        type: Text,
+        type: String,
         trim: true
     },
     pagesNumber: {
@@ -31,12 +30,11 @@ const bookSchema = new mongoose.Schema({
     },
     type: {
         type: [String],
-        enum: ['Fiction', 'Non-Fiction', 'Science', 'History', 'Biography', 'Fantasy', 'Mystery', 'Romance', 'Other'],
         required: true
     },
     format: {
         type: String,
-        enum: ['Hardcover', 'Paperback', 'Ebook', 'Audiobook'],
+        enum: ['Hardcover', 'Paperback', 'Ebook', 'Audiobook', 'Other'],
     },
     saga: {
         type: String,
@@ -52,12 +50,37 @@ const bookSchema = new mongoose.Schema({
         default: 0,
         min: 0
     },
-    ref: {
-        type: String,
-        unique: true,
-        required: true,
-        trim: true
+    bookRef: {
+        classification: {
+            type: String,
+            required: true,
+            enum: ['ISBN', 'ASIN', 'Other']
+        },
+        code: {
+            type: String,
+            unique: true,
+        }
     }
+});
+
+bookSchema.pre('save', async function(next) {
+    if (this.bookRef.classification === 'Other' && !this.bookRef.code) {
+        const prefix = this.title.substring(0, 3).toUpperCase();
+        // Find existing codes with the same prefix
+        const regex = new RegExp(`^${prefix}(\\d+)$`);
+        const books = await mongoose.model('Book').find({ 'bookRef.code': regex });
+        // Find the max number used so far
+        let maxNum = 0;
+        books.forEach(book => {
+            const match = book.bookRef.code.match(/^.{3}(\d+)$/);
+            if (match) {
+                const num = parseInt(match[1], 10);
+                if (num > maxNum) maxNum = num;
+            }
+        });
+        this.bookRef.code = `${prefix}${maxNum + 1}`;
+    }
+    next();
 });
 
 const Book = mongoose.model('Book', bookSchema);

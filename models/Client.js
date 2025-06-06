@@ -21,12 +21,12 @@ const clientSchema = new mongoose.Schema({
         match: /.+\@.+\..+/
     },
     history: [{
-        bookRef: {
+        book: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Book",
             required: true
         },
-        libraryRef: {
+        library: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Library",
             required: true

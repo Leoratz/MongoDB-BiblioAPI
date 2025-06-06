@@ -18,7 +18,7 @@ const librarySchema = new mongoose.Schema({
             default: 0,
             min: 0
         },
-        ref: {
+        bookRef: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Book",
             required: true
