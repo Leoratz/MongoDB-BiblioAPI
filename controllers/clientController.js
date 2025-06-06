@@ -2,8 +2,26 @@ import Client from "../models/Client.js";
 import Library from "../models/Library.js";
 
 export const getAllClients = async (req, res) => {
+  const filters = {}
+
+  const { page: queryPage, limit: queryLimit, ...queryFilters } = req.query;
+  const limit = parseInt(queryLimit) || 10;
+  const page = parseInt(queryPage) || 1;
+  const skip = (page - 1) * limit;
+
+  Object.entries(queryFilters).forEach(([key, value]) => {
+    switch (key) {
+      case "lastName":
+        filters.lastName = { $regex: value, $options: "i" }; // insensitive regex
+        break;
+      case "email":
+        filters.email = { $regex: value, $options: "i" };
+        break;
+    }
+  });
+
   try {
-    const clients = await Client.find();
+    const clients = await Client.find(filters).skip(skip).limit(limit);
     res.status(200).json(clients);
   } catch (error) {
     console.error("Error fetching clients:", error);
