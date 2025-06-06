@@ -9,25 +9,29 @@ export const getAllBooks = async (req, res) => {
     const skip = (page - 1) * limit;
 
     Object.entries(queryFilters).forEach(([key, value]) => {
-        switch (key) {
-            case "title":
-                filters.title = { $regex: value, $options: "i" };
-                break;
-            case "author":
-                filters.author = { $regex: value, $options: "i" };
-                break;
-            case "genre":
-                filters.genre = { $regex: value, $options: "i" };
-                break;
-            case "publisher":
-                filters.publisher = { $regex: value, $options: "i" };
-                break;
-            case "classification":
-                filters["bookRef.classification"] = { $regex: value, $options: "i" };
-                break;
-            case "code":
-                filters["bookRef.code"] = { $regex: value, $options: "i" };
-                break;
+        if (key === "price_lt") {
+            filters.price = { $lt: Number(value) };
+        } else {
+            switch (key) {
+                case "title":
+                    filters.title = { $regex: value, $options: "i" };
+                    break;
+                case "author":
+                    filters.author = { $regex: value, $options: "i" };
+                    break;
+                case "genre":
+                    filters.genre = { $regex: value, $options: "i" };
+                    break;
+                case "publisher":
+                    filters.publisher = { $regex: value, $options: "i" };
+                    break;
+                case "classification":
+                    filters["bookRef.classification"] = { $regex: value, $options: "i" };
+                    break;
+                case "code":
+                    filters["bookRef.code"] = { $regex: value, $options: "i" };
+                    break;
+            }
         }
     });
 
