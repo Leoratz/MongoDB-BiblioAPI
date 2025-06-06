@@ -59,3 +59,4 @@ Vous pouvez trouver des statistiques sur :
 Il est possible de :
 - voir le nombre total de livres par librairie
 - acheter un livre (il est alors placé dans la liste du client et retiré du stock de la librairie d'où il vient ; Si la librairie ne possède pas ce livre-ci ou qu'elle ne possède pas de stock)
+- utiliser des filtres sur les clients, librairies et livres
