@@ -12,7 +12,7 @@ export const getAllClients = async (req, res) => {
   Object.entries(queryFilters).forEach(([key, value]) => {
     switch (key) {
       case "lastName":
-        filters.lastName = { $regex: value, $options: "i" }; // insensitive regex
+        filters.lastName = { $regex: value, $options: "i" };
         break;
       case "email":
         filters.email = { $regex: value, $options: "i" };
@@ -21,7 +21,18 @@ export const getAllClients = async (req, res) => {
   });
 
   try {
-    const clients = await Client.find(filters).skip(skip).limit(limit);
+    const clients = await Client
+      .find(filters)
+      .skip(skip)
+      .limit(limit)
+      .populate({
+        path: 'history.book',
+        select: 'title author'
+      })
+      .populate({
+        path: 'history.library',
+        select: 'name address'
+      });
     res.status(200).json(clients);
   } catch (error) {
     console.error("Error fetching clients:", error);
@@ -32,7 +43,16 @@ export const getAllClients = async (req, res) => {
 export const getClientById = async (req, res) => {
   const { id } = req.params;
   try {
-    const client = await Client.findById(id);
+    const client = await Client
+      .findById(id)
+      .populate({
+        path: 'history.book',
+        select: 'title author'
+      })
+      .populate({
+        path: 'history.library',
+        select: 'name address'
+      });
     if (!client) return res.status(404).json("Client not found");
     res.json(client);
   } catch (error) {
@@ -174,7 +194,7 @@ export const mediumPurchaseByClient = async (req, res) => {
 
     const mediumPurchase = totalPurchases / clients.length;
 
-    res.status(200).json({ mediumPurchase });
+    res.status(200).json({ "Moyenne d'\achat:": mediumPurchase });
 
   } catch (error) {
     console.error("Error calculating medium purchase by client:", error);

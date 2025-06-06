@@ -32,7 +32,10 @@ export const getAllBooks = async (req, res) => {
     });
 
     try {
-        const books = await Book.find(filters).skip(skip).limit(limit);
+        const books = await Book
+            .find(filters)
+            .skip(skip)
+            .limit(limit);
         res.status(200).json(books);
     } catch (error) {
         console.error("Error fetching books:", error);

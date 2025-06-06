@@ -20,7 +20,14 @@ export const getAllLibraries = async (req, res) => {
     });
 
     try {
-        const libraries = await Library.find(filters).skip(skip).limit(limit);
+        const libraries = await Library
+            .find(filters)
+            .skip(skip)
+            .limit(limit)
+            .populate({
+                path: 'books.bookRef',
+                select: 'title author price'
+            });
         res.status(200).json(libraries);
     } catch (error) {
         console.error("Error fetching libraries:", error);
@@ -31,7 +38,12 @@ export const getAllLibraries = async (req, res) => {
 export const getLibraryById = async (req, res) => {
     const { id } = req.params;
     try {
-        const library = await Library.findById(id);
+        const library = await Library
+            .findById(id)
+            .populate({
+                path: 'books.bookRef',
+                select: 'title author price'
+            });
         if (!library) {
             return res.status(404).json({ message: "Library not found" });
         }
@@ -113,9 +125,18 @@ export const AllStockBylibrary = async (req, res) => {
                 $unwind: "$books"
             },
             {
+                $lookup: {
+                    from: "books",
+                    localField: "books.bookRef",
+                    foreignField: "_id",
+                    as: "bookDetails"
+                }
+            },
+            {
                 $group: {
                     _id: "$_id",
-                    totalStock: { $sum: "$books.stock" }
+                    name: { $first: "$name" },
+                    totalStock: { $sum: "$books.stock" },
                 }
             }
         ]);
@@ -126,13 +147,3 @@ export const AllStockBylibrary = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
-
-const NumberOfBooksBought = await Library.aggregate([
-  {
-    $group: {
-      _id: "$_id",
-      totalBooksBought: { $sum: { $size: "$books" } }
-    }
-  }
-])
-

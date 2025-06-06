@@ -6,17 +6,17 @@ import {
     createLibrary, 
     updateLibrary, 
     deleteLibrary, 
-    mediumPurchaseByClient
+    AllStockBylibrary
 } from "../controllers/libraryController.js";
 
 const router = express.Router();
 
+router.get("/AllStockBylibrary", AllStockBylibrary);
 router.get("/", getAllLibraries);
 router.get("/:id", getLibraryById);
 router.post("/", createLibrary);
 router.put("/:id", updateLibrary);
 router.delete("/:id", deleteLibrary);
-router.get("/mediumPurchaseByClient/:id", mediumPurchaseByClient);
 
 
 
