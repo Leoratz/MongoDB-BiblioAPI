@@ -24,3 +24,49 @@ export const getBookById = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
+
+export const createBook = async (req, res) => {
+    const {
+        title,
+        author,
+        genre,
+        publisher,
+        publishedDate,
+        description,
+        pagesNumber,
+        type,
+        format,
+        saga,
+        price,
+        salesNumber,
+        bookRef: {
+            classification,
+            code
+        }
+    } = req.body;
+    try {
+        const newBook = new Book({ 
+            title, 
+            author, 
+            genre,
+            publisher,
+            publishedDate,
+            description,
+            pagesNumber,
+            type,
+            format,
+            saga,
+            price,
+            salesNumber,
+            bookRef: {
+                classification,
+                code
+            }
+        });
+        await newBook.save();
+        res.status(201).json(newBook);
+    } catch (error) {
+        console.error("Error creating book:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
