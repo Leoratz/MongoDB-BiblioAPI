@@ -167,3 +167,21 @@ export const deleteBook = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const getBookStats = async (req, res) => {
+  try {
+    const statsByFormat = await Book.aggregate([
+      { $group: { _id: "$format", totalSales: { $sum: "$salesNumber" }, count: { $sum: 1 } } }
+    ]);
+
+    const statsByAuthor = await Book.aggregate([
+      { $unwind: "$author" },
+      { $group: { _id: "$author", totalSales: { $sum: "$salesNumber" }, count: { $sum: 1 } } }
+    ]);
+
+    res.status(200).json({ statsByFormat, statsByAuthor });
+  } catch (error) {
+    console.error("Error fetching book stats:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

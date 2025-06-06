@@ -83,6 +83,21 @@ bookSchema.pre('save', async function(next) {
     next();
 });
 
+bookSchema.statics.getStats = function () {
+  return this.aggregate([
+    {
+      $group: {
+        _id: "$format",
+        totalBooks: { $sum: 1 },
+        avgPrice: { $avg: "$price" },
+        totalSales: { $sum: "$salesNumber" }
+      }
+    },
+    {
+      $sort: { totalBooks: -1 }
+    }
+  ]);
+};
 const Book = mongoose.model('Book', bookSchema);
 
 export default Book;
