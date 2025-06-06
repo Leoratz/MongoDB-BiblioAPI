@@ -1,8 +1,26 @@
 import Library from "../models/Library.js";
 
 export const getAllLibraries = async (req, res) => {
+    const filters = {}
+
+    const { page: queryPage, limit: queryLimit, ...queryFilters } = req.query;
+    const limit = parseInt(queryLimit) || 10;
+    const page = parseInt(queryPage) || 1;
+    const skip = (page - 1) * limit;
+
+    Object.entries(queryFilters).forEach(([key, value]) => {
+        switch (key) {
+            case "name":
+                filters.name = { $regex: value, $options: "i" }; // insensitive regex
+                break;
+            case "address":
+                filters.address = { $regex: value, $options: "i" };
+                break;
+        }
+    });
+
     try {
-        const libraries = await Library.find();
+        const libraries = await Library.find(filters).skip(skip).limit(limit);
         res.status(200).json(libraries);
     } catch (error) {
         console.error("Error fetching libraries:", error);

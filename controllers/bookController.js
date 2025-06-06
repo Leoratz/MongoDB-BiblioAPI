@@ -1,8 +1,38 @@
 import Book from "../models/Book.js";
 
 export const getAllBooks = async (req, res) => {
+    const filters = {}
+
+    const { page: queryPage, limit: queryLimit, ...queryFilters } = req.query;
+    const limit = parseInt(queryLimit) || 10;
+    const page = parseInt(queryPage) || 1;
+    const skip = (page - 1) * limit;
+
+    Object.entries(queryFilters).forEach(([key, value]) => {
+        switch (key) {
+            case "title":
+                filters.title = { $regex: value, $options: "i" };
+                break;
+            case "author":
+                filters.author = { $regex: value, $options: "i" };
+                break;
+            case "genre":
+                filters.genre = { $regex: value, $options: "i" };
+                break;
+            case "publisher":
+                filters.publisher = { $regex: value, $options: "i" };
+                break;
+            case "classification":
+                filters["bookRef.classification"] = { $regex: value, $options: "i" };
+                break;
+            case "code":
+                filters["bookRef.code"] = { $regex: value, $options: "i" };
+                break;
+        }
+    });
+
     try {
-        const books = await Book.find();
+        const books = await Book.find(filters).skip(skip).limit(limit);
         res.status(200).json(books);
     } catch (error) {
         console.error("Error fetching books:", error);
