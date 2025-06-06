@@ -2,7 +2,7 @@ import express from "express";
 
 import { 
     getAllClients, 
-    getClientById, 
+    // getClientById, 
     // createBook, 
     // updateBook, 
     // deleteBook
@@ -11,6 +11,6 @@ import {
 const router = express.Router();
 
 router.get("/", getAllClients);
-router.get("/:id", getClientById);
+// router.get("/:id", getClientById);
 
 export default router;

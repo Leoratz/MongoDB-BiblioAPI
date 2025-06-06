@@ -2,7 +2,7 @@ import express from "express";
 
 import { 
     getAllLibraries,
-    getLibraryById, 
+    // getLibraryById, 
     // createBook, 
     // updateBook, 
     // deleteBook
@@ -11,6 +11,6 @@ import {
 const router = express.Router();
 
 router.get("/", getAllLibraries);
-router.get("/:id", getLibraryById);
+// router.get("/:id", getLibraryById);
 
 export default router;
