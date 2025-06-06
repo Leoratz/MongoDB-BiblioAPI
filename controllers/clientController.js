@@ -26,18 +26,30 @@ export const createClient = async (req, res) => {
     lastName,
     firstName,
     email,
-    history: { book, library, buyingDate },
+    history
   } = req.body;
+
+  let formattedHistory = {};
+  if (Array.isArray(history)) {
+    formattedHistory = history.map(item => ({
+      book: item.book,
+      library: item.library,
+      buyingDate: item.buyingDate,
+    }));
+  } else if (history && history.book){
+    formattedHistory = [{
+      book: history.book,
+      library: history.library,
+      buyingDate: history.buyingDate
+    }]
+  }
+
   try {
     const newClient = new Client({
       lastName,
       firstName,
       email,
-      history: {
-        book,
-        library,
-        buyingDate,
-      },
+      history: formattedHistory
     });
     await newClient.save();
     res.status(201).json(newClient);

@@ -24,16 +24,13 @@ const clientSchema = new mongoose.Schema({
         book: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Book",
-            required: true
         },
         library: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Library",
-            required: true
         },
         buyingDate: {
-            type: Date,
-            default: Date.now
+            type: Date
         }
     }]
 });
