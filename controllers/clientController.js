@@ -139,3 +139,27 @@ export const buyBook = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+export const mediumPurchaseByClient = async (req, res) => {
+  try {
+    const clients = await Client.find().populate('history.book').populate('history.library');
+    
+    if (clients.length === 0) {
+      return res.status(404).json({ message: "No clients found" });
+    }
+
+    const totalPurchases = clients.reduce((accumulateur, client) => {
+      return accumulateur + client.history.length;
+    }, 0);
+
+    const mediumPurchase = totalPurchases / clients.length;
+
+    res.status(200).json({ mediumPurchase });
+
+  } catch (error) {
+    console.error("Error calculating medium purchase by client:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

@@ -85,3 +85,36 @@ export const deleteLibrary = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
+export const AllStockBylibrary = async (req, res) => {
+    try {
+
+        const libraries = await Library.aggregate([
+            {
+                $unwind: "$books"
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    totalStock: { $sum: "$books.stock" }
+                }
+            }
+        ]);
+        res.status(200).json(libraries);
+
+    } catch (error) {
+        console.error("Error counting books bought:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+const NumberOfBooksBought = await Library.aggregate([
+  {
+    $group: {
+      _id: "$_id",
+      totalBooksBought: { $sum: { $size: "$books" } }
+    }
+  }
+])
+

@@ -5,7 +5,8 @@ import {
     getLibraryById, 
     createLibrary, 
     updateLibrary, 
-    deleteLibrary
+    deleteLibrary, 
+    mediumPurchaseByClient
 } from "../controllers/libraryController.js";
 
 const router = express.Router();
@@ -15,6 +16,8 @@ router.get("/:id", getLibraryById);
 router.post("/", createLibrary);
 router.put("/:id", updateLibrary);
 router.delete("/:id", deleteLibrary);
+router.get("/mediumPurchaseByClient/:id", mediumPurchaseByClient);
+
 
 
 export default router;
