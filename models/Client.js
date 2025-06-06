@@ -35,6 +35,11 @@ const clientSchema = new mongoose.Schema({
     }]
 });
 
+clientSchema.index({ lastName: 1, firstName: 1 });
+clientSchema.index({ email: 1 });
+clientSchema.index({ "history.book": 1 });
+clientSchema.index({ "history.buyingDate": -1 });
+
 const Client = mongoose.model("Client", clientSchema);
 
 export default Client;

@@ -26,6 +26,11 @@ const librarySchema = new mongoose.Schema({
     }],
 });
 
+librarySchema.index({ name: 1 });
+librarySchema.index({ address: 1 });
+librarySchema.index({ "books.bookRef": 1 });
+librarySchema.index({ "books.stock": -1 });
+
 const Library = mongoose.model("Library", librarySchema);
 
 export default Library;

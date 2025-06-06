@@ -1,6 +1,6 @@
 # MongoDB-BiblioAPI
 
-Ce projet a été réalisé par Brunic Feyou, Léora Chriqui et Aurore Dimech, pour la matière Base de données - NoSQL
+Ce projet a été réalisé par Brunic Feyou, Léora Chriqui et Aurore Dimech (GROUPE J), pour la matière Base de données - NoSQL
 
 ## Prérequis & Installation
 

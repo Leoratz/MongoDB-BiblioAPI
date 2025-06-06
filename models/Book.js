@@ -98,6 +98,11 @@ bookSchema.statics.getStats = function () {
     }
   ]);
 };
+
+bookSchema.index({ title: 'text', author: 'text', description: 'text' });
+bookSchema.index({ salesNumber: -1 });
+bookSchema.index({ publishedDate: -1 });
+
 const Book = mongoose.model('Book', bookSchema);
 
 export default Book;
